@@ -32,11 +32,25 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isAuthPage = request.nextUrl.pathname.startsWith("/login");
-  const isProtected = request.nextUrl.pathname.startsWith("/dashboard");
+  const isProtected =
+    request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/admin");
 
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  if (user && request.nextUrl.pathname.startsWith("/admin")) {
+    const { data: me } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (me?.role !== "admin") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
   if (user && isAuthPage) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -45,5 +59,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login"],
+  matcher: ["/dashboard/:path*", "/login", "/admin/:path*"],
 };
