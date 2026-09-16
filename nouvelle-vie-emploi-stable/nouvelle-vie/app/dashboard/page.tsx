@@ -95,6 +95,20 @@ export default async function DashboardPage() {
             Mes candidatures
           </Link>
         </div>
+        <div className="mx-5 mb-2 flex gap-2">
+          <Link
+            href="/suivi"
+            className="flex-1 text-center py-3 rounded-full border-2 border-navy text-navy text-sm font-semibold"
+          >
+            Mon suivi
+          </Link>
+          <Link
+            href="/ressources"
+            className="flex-1 text-center py-3 rounded-full border-2 border-navy text-navy text-sm font-semibold"
+          >
+            Mes ressources
+          </Link>
+        </div>
 
         <div className="h-4" />
       </div>
