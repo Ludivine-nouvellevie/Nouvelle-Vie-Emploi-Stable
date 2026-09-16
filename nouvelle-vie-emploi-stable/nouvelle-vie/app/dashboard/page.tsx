@@ -65,12 +65,18 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="mx-5 mt-4 mb-2">
+        <div className="mx-5 mt-4 mb-2 flex gap-2">
           <Link
             href="/parcours"
-            className="block text-center w-full py-3 rounded-full bg-navy text-white text-sm font-semibold"
+            className="flex-1 text-center py-3 rounded-full bg-navy text-white text-sm font-semibold"
           >
-            Voir mon parcours →
+            Mon parcours
+          </Link>
+          <Link
+            href="/mental"
+            className="flex-1 text-center py-3 rounded-full bg-gold text-navy-deep text-sm font-semibold"
+          >
+            Mon mental
           </Link>
         </div>
 
