@@ -87,6 +87,14 @@ export default async function DashboardPage() {
             Mes actions
           </Link>
         </div>
+        <div className="mx-5 mb-2">
+          <Link
+            href="/candidatures"
+            className="block text-center w-full py-3 rounded-full border-2 border-navy text-navy text-sm font-semibold"
+          >
+            Mes candidatures
+          </Link>
+        </div>
 
         <div className="h-4" />
       </div>
