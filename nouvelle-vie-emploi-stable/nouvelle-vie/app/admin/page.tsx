@@ -143,9 +143,9 @@ export default async function AdminPage() {
                   return (
                     <tr key={b.id} className="border-t border-line">
                       <td className="px-4 py-3">
-                        <div className="font-medium text-navy">
+                        <Link href={`/admin/beneficiaires/${b.id}`} className="font-medium text-navy underline">
                           {b.users?.firstname || "Sans nom"} {b.users?.lastname || ""}
-                        </div>
+                        </Link>
                         <div className="text-xs text-[#8A8577]">{b.users?.email}</div>
                       </td>
                       <td className="px-4 py-3 text-[#4A4636]">{b.job_target || "—"}</td>
