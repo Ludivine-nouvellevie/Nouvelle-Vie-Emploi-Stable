@@ -36,6 +36,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/dashboard") ||
     request.nextUrl.pathname.startsWith("/parcours") ||
     request.nextUrl.pathname.startsWith("/mental") ||
+    request.nextUrl.pathname.startsWith("/actions") ||
     request.nextUrl.pathname.startsWith("/admin");
 
   if (!user && isProtected) {
@@ -61,5 +62,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/admin/:path*", "/parcours/:path*", "/mental/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/login",
+    "/admin/:path*",
+    "/parcours/:path*",
+    "/mental/:path*",
+    "/actions/:path*",
+  ],
 };
