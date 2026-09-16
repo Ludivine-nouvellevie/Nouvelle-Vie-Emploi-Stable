@@ -102,6 +102,18 @@ export default async function AdminPage() {
             >
               + Attribuer une action
             </Link>
+            <Link
+              href="/admin/appointments/new"
+              className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
+            >
+              + Programmer un RDV
+            </Link>
+            <Link
+              href="/admin/resources/new"
+              className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
+            >
+              + Ajouter une ressource
+            </Link>
             <LogoutButton />
           </div>
         </div>
