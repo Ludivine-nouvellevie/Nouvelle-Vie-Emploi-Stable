@@ -96,6 +96,12 @@ export default async function AdminPage() {
             >
               + Ajouter un bénéficiaire
             </Link>
+            <Link
+              href="/admin/actions/new"
+              className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
+            >
+              + Attribuer une action
+            </Link>
             <LogoutButton />
           </div>
         </div>
