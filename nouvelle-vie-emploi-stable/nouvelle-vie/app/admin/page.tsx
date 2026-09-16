@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import LogoutButton from "@/components/LogoutButton";
 
 type BeneficiaryRow = {
   id: string;
@@ -88,12 +89,15 @@ export default async function AdminPage() {
             <h1 className="text-xl font-bold text-navy mb-1">Tableau de bord administratrice</h1>
             <p className="text-sm text-[#8A8577]">{list.length} bénéficiaire(s)</p>
           </div>
-          <Link
-            href="/admin/new"
-            className="px-4 py-2 rounded-full bg-navy text-white text-sm font-semibold whitespace-nowrap"
-          >
-            + Ajouter un bénéficiaire
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin/new"
+              className="px-4 py-2 rounded-full bg-navy text-white text-sm font-semibold whitespace-nowrap"
+            >
+              + Ajouter un bénéficiaire
+            </Link>
+            <LogoutButton />
+          </div>
         </div>
 
         {list.length === 0 ? (
