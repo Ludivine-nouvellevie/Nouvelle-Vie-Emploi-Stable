@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import LogoutButton from "@/components/LogoutButton";
 
 export default async function DashboardPage() {
@@ -64,7 +65,16 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="h-6" />
+        <div className="mx-5 mt-4 mb-2">
+          <Link
+            href="/parcours"
+            className="block text-center w-full py-3 rounded-full bg-navy text-white text-sm font-semibold"
+          >
+            Voir mon parcours →
+          </Link>
+        </div>
+
+        <div className="h-4" />
       </div>
     </div>
   );
