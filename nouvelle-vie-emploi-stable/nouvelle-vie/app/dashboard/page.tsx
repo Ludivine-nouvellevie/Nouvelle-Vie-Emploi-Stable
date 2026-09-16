@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import LogoutButton from "@/components/LogoutButton";
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -32,8 +33,11 @@ export default async function DashboardPage() {
             <h1 className="text-lg font-bold text-navy">Bonjour {firstname} 👋</h1>
             <p className="text-xs text-[#8A8577] mt-1">Ravi(e) de vous revoir !</p>
           </div>
-          <div className="w-9 h-9 rounded-full bg-navy text-white flex items-center justify-center text-sm font-semibold">
-            {firstname?.[0]?.toUpperCase() ?? "?"}
+          <div className="flex flex-col items-end gap-2">
+            <div className="w-9 h-9 rounded-full bg-navy text-white flex items-center justify-center text-sm font-semibold">
+              {firstname?.[0]?.toUpperCase() ?? "?"}
+            </div>
+            <LogoutButton />
           </div>
         </div>
 
