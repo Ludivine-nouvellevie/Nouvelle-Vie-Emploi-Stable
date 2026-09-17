@@ -193,6 +193,18 @@ export default async function AdminPage() {
               + Ajouter une ressource
             </Link>
             <Link
+              href="/admin/resources"
+              className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
+            >
+              Gérer les ressources
+            </Link>
+            <Link
+              href="/admin/offres/new"
+              className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
+            >
+              + Publier une offre
+            </Link>
+            <Link
               href="/admin/suivi-actions"
               className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
             >
