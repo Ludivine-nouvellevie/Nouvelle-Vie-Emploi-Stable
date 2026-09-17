@@ -3,6 +3,13 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import LogoutButton from "@/components/LogoutButton";
 
+const MOOD_SCORE: Record<string, number> = {
+  tres_motive: 100,
+  motive: 75,
+  peu_motive: 40,
+  demoralise: 15,
+};
+
 export default async function DashboardPage() {
   const supabase = createClient();
 
@@ -25,6 +32,8 @@ export default async function DashboardPage() {
     .single();
 
   let alerts: string[] = [];
+  let globalScore: number | null = null;
+
   if (beneficiary) {
     const today = new Date().toISOString().slice(0, 10);
     const { data: lateActions } = await supabase
@@ -49,10 +58,36 @@ export default async function DashboardPage() {
       .limit(1)
       .maybeSingle();
     if (soonAppointment) {
-      alerts.push(
-        `Rendez-vous le ${new Date(soonAppointment.date).toLocaleDateString("fr-FR")}`
-      );
+      alerts.push(`Rendez-vous le ${new Date(soonAppointment.date).toLocaleDateString("fr-FR")}`);
     }
+
+    // Jauge "retour à l'emploi" : moyenne actions / candidatures / mental
+    const { data: allActions } = await supabase
+      .from("actions")
+      .select("status")
+      .eq("beneficiary_id", beneficiary.id);
+    const actionsScore =
+      allActions && allActions.length > 0
+        ? (allActions.filter((a) => a.status === "fait").length / allActions.length) * 100
+        : 0;
+
+    const { data: allApplications } = await supabase
+      .from("applications")
+      .select("id")
+      .eq("beneficiary_id", beneficiary.id);
+    const cvScore = Math.min((allApplications?.length ?? 0) * 20, 100);
+
+    const { data: lastMindset } = await supabase
+      .from("mindset_entries")
+      .select("motivation_level, confidence_score")
+      .eq("beneficiary_id", beneficiary.id)
+      .order("date", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const mentalScore =
+      lastMindset?.confidence_score ?? (lastMindset ? MOOD_SCORE[lastMindset.motivation_level] : 0) ?? 0;
+
+    globalScore = Math.round((actionsScore + cvScore + mentalScore) / 3);
   }
 
   const firstname = profile?.firstname || "à vous";
@@ -72,6 +107,26 @@ export default async function DashboardPage() {
             <LogoutButton />
           </div>
         </div>
+
+        {globalScore !== null && (
+          <div className="mx-5 mt-4 p-4 rounded-xl2 bg-navy text-white">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-semibold uppercase tracking-wide text-white/80">
+                Mon retour à l'emploi
+              </span>
+              <span className="text-lg font-bold text-gold">{globalScore}%</span>
+            </div>
+            <div className="h-2.5 rounded-full bg-white/20 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gold"
+                style={{ width: `${globalScore}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-white/70 mt-2">
+              Basé sur vos actions réalisées, vos candidatures envoyées et votre état d'esprit.
+            </p>
+          </div>
+        )}
 
         <div className="mx-5 mt-4 p-3 rounded-xl bg-[#FBF3E4] text-xs text-gold-deep italic">
           « Crois en toi, tu es plus capable que tu ne le penses. »
@@ -148,6 +203,14 @@ export default async function DashboardPage() {
             className="flex-1 text-center py-3 rounded-full border-2 border-navy text-navy text-sm font-semibold"
           >
             Mes ressources
+          </Link>
+        </div>
+        <div className="mx-5 mb-2">
+          <Link
+            href="/offres"
+            className="block text-center w-full py-3 rounded-full border-2 border-navy text-navy text-sm font-semibold"
+          >
+            Offres d'emploi
           </Link>
         </div>
 
