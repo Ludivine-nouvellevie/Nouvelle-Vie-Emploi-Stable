@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAction } from "./actions";
+import ActionTitleField from "./ActionTitleField";
 
 type BeneficiaryOption = {
   id: string;
@@ -49,14 +50,7 @@ export default async function NewActionPage() {
             </select>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-navy">Titre</label>
-            <input
-              name="title"
-              required
-              className="w-full mt-1 px-3 py-2 rounded-lg border border-line bg-white text-sm"
-            />
-          </div>
+          <ActionTitleField />
 
           <div>
             <label className="text-xs font-medium text-navy">Description</label>
