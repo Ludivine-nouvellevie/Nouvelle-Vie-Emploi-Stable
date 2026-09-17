@@ -38,7 +38,7 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
   const { data: beneficiary } = await supabase
     .from("beneficiaries")
     .select(
-      "id, user_id, job_target, sector, contract_type, work_time, mobility, six_month_goal, obstacles, notes, users:user_id(firstname, lastname, email)"
+      "id, user_id, job_target, sector, contract_type, work_time, mobility, six_month_goal, obstacles, notes, is_active, users:user_id(firstname, lastname, email)"
     )
     .eq("id", params.id)
     .single<{
@@ -52,6 +52,7 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
       six_month_goal: string | null;
       obstacles: string | null;
       notes: string | null;
+      is_active: boolean;
       users: { firstname: string | null; lastname: string | null; email: string | null } | null;
     }>();
 
@@ -109,6 +110,11 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
               className="w-full mt-1 px-3 py-2 rounded-lg border border-line bg-white text-sm"
             />
           </div>
+
+          <label className="flex items-center gap-2 text-sm text-navy">
+            <input type="checkbox" name="is_active" defaultChecked={beneficiary.is_active} className="w-4 h-4" />
+            Bénéficiaire actif (décocher quand le parcours est terminé ou arrêté)
+          </label>
 
           <button
             type="submit"

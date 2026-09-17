@@ -27,6 +27,7 @@ export async function updateBeneficiary(formData: FormData) {
   const six_month_goal = String(formData.get("six_month_goal") || "");
   const obstacles = String(formData.get("obstacles") || "");
   const notes = String(formData.get("notes") || "");
+  const is_active = formData.get("is_active") === "on";
 
   const { error: userError } = await supabase
     .from("users")
@@ -45,6 +46,7 @@ export async function updateBeneficiary(formData: FormData) {
       six_month_goal,
       obstacles,
       notes,
+      is_active,
     })
     .eq("id", beneficiaryId);
   if (beneficiaryError) throw new Error(beneficiaryError.message);
