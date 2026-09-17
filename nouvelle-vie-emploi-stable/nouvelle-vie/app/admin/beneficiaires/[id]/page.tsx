@@ -58,6 +58,14 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
 
   if (!beneficiary) redirect("/admin");
 
+  const { data: actionsHistory } = await supabase
+    .from("actions")
+    .select("id, title, status, priority, due_date")
+    .eq("beneficiary_id", beneficiary.id)
+    .order("due_date", { ascending: false, nullsFirst: false });
+
+  const STATUS_LABELS: Record<string, string> = { a_faire: "À faire", en_cours: "En cours", fait: "Fait" };
+
   return (
     <div className="min-h-screen bg-[#F4F0E6] p-6">
       <div className="max-w-xl mx-auto">
@@ -67,7 +75,28 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
         <h1 className="text-xl font-bold text-navy mt-3 mb-1">
           {beneficiary.users?.firstname || "Sans nom"} {beneficiary.users?.lastname || ""}
         </h1>
-        <p className="text-sm text-[#8A8577] mb-6">{beneficiary.users?.email}</p>
+        <p className="text-sm text-[#8A8577] mb-4">{beneficiary.users?.email}</p>
+
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Link
+            href={`/admin/actions/new?beneficiary=${beneficiary.id}`}
+            className="px-3 py-1.5 rounded-full bg-navy text-white text-xs font-semibold"
+          >
+            + Attribuer une action
+          </Link>
+          <Link
+            href={`/admin/appointments/new?beneficiary=${beneficiary.id}`}
+            className="px-3 py-1.5 rounded-full border-2 border-navy text-navy text-xs font-semibold"
+          >
+            + Programmer un RDV
+          </Link>
+          <Link
+            href={`/admin/resources?beneficiary=${beneficiary.id}`}
+            className="px-3 py-1.5 rounded-full border-2 border-navy text-navy text-xs font-semibold"
+          >
+            Attribuer des ressources
+          </Link>
+        </div>
 
         <form
           action={updateBeneficiary}
@@ -123,6 +152,33 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
             Enregistrer les modifications
           </button>
         </form>
+
+        <h2 className="text-sm font-semibold text-navy mt-8 mb-3">Historique des actions</h2>
+        {!actionsHistory || actionsHistory.length === 0 ? (
+          <div className="bg-white rounded-xl2 border border-line p-4 text-xs text-[#8A8577]">
+            Aucune action attribuée pour le moment.
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {actionsHistory.map((a) => (
+              <div
+                key={a.id}
+                className="bg-white rounded-xl border border-line p-3 flex justify-between items-center"
+              >
+                <div>
+                  <div className="text-sm font-medium text-navy">{a.title}</div>
+                  <div className="text-xs text-[#8A8577] mt-0.5">
+                    {a.priority && `Priorité ${a.priority} · `}
+                    {a.due_date ? new Date(a.due_date).toLocaleDateString("fr-FR") : "Sans échéance"}
+                  </div>
+                </div>
+                <span className="text-[11px] font-medium px-2 py-1 rounded-full bg-[#F1EFE8] text-navy whitespace-nowrap">
+                  {STATUS_LABELS[a.status] || a.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
