@@ -40,6 +40,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/candidatures") ||
     request.nextUrl.pathname.startsWith("/suivi") ||
     request.nextUrl.pathname.startsWith("/ressources") ||
+    request.nextUrl.pathname.startsWith("/offres") ||
     request.nextUrl.pathname.startsWith("/admin");
 
   if (!user && isProtected) {
@@ -75,5 +76,6 @@ export const config = {
     "/candidatures/:path*",
     "/suivi/:path*",
     "/ressources/:path*",
+    "/offres/:path*",
   ],
 };
