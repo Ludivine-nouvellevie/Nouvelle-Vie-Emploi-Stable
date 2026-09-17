@@ -24,6 +24,37 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .single();
 
+  let alerts: string[] = [];
+  if (beneficiary) {
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: lateActions } = await supabase
+      .from("actions")
+      .select("id")
+      .eq("beneficiary_id", beneficiary.id)
+      .neq("status", "fait")
+      .lt("due_date", today);
+    if (lateActions && lateActions.length > 0) {
+      alerts.push(`${lateActions.length} action(s) en retard`);
+    }
+
+    const in3Days = new Date();
+    in3Days.setDate(in3Days.getDate() + 3);
+    const { data: soonAppointment } = await supabase
+      .from("appointments")
+      .select("date")
+      .eq("beneficiary_id", beneficiary.id)
+      .gte("date", new Date().toISOString())
+      .lte("date", in3Days.toISOString())
+      .order("date", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    if (soonAppointment) {
+      alerts.push(
+        `Rendez-vous le ${new Date(soonAppointment.date).toLocaleDateString("fr-FR")}`
+      );
+    }
+  }
+
   const firstname = profile?.firstname || "à vous";
 
   return (
@@ -57,6 +88,16 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {alerts.length > 0 && (
+          <div className="mx-5 mt-4 flex flex-col gap-2">
+            {alerts.map((a, i) => (
+              <div key={i} className="p-3 rounded-xl bg-[#FBF3E4] text-xs text-gold-deep font-medium">
+                🔔 {a}
+              </div>
+            ))}
+          </div>
+        )}
 
         {!beneficiary && (
           <div className="mx-5 mt-4 p-3 rounded-xl bg-blue-50 text-xs text-blue-800">
