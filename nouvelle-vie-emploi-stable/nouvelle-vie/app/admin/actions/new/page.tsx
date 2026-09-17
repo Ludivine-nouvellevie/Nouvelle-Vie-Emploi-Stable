@@ -9,7 +9,11 @@ type BeneficiaryOption = {
   users: { firstname: string | null; lastname: string | null; email: string | null } | null;
 };
 
-export default async function NewActionPage() {
+export default async function NewActionPage({
+  searchParams,
+}: {
+  searchParams: { beneficiary?: string };
+}) {
   const supabase = createClient();
 
   const {
@@ -39,6 +43,7 @@ export default async function NewActionPage() {
             <select
               name="beneficiary_id"
               required
+              defaultValue={searchParams.beneficiary || ""}
               className="w-full mt-1 px-3 py-2 rounded-lg border border-line bg-white text-sm"
             >
               <option value="">— Choisir —</option>
