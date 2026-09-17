@@ -114,9 +114,48 @@ export default async function AdminPage() {
             >
               + Ajouter une ressource
             </Link>
+            <Link
+              href="/admin/suivi-actions"
+              className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
+            >
+              Suivi des actions
+            </Link>
+            <Link
+              href="/admin/calendrier"
+              className="px-4 py-2 rounded-full border-2 border-navy text-navy text-sm font-semibold whitespace-nowrap"
+            >
+              Calendrier
+            </Link>
             <LogoutButton />
           </div>
         </div>
+
+        {(() => {
+          const today = new Date().toISOString().slice(0, 10);
+          const totalLate = (actions ?? []).filter(
+            (a) => a.status !== "fait" && a.due_date && a.due_date < today
+          ).length;
+          const in3Days = new Date();
+          in3Days.setDate(in3Days.getDate() + 3);
+          const upcomingRdv = (appointments ?? []).filter((a) => new Date(a.date) <= in3Days).length;
+
+          if (totalLate === 0 && upcomingRdv === 0) return null;
+
+          return (
+            <div className="mb-6 flex flex-wrap gap-3">
+              {totalLate > 0 && (
+                <div className="px-4 py-2 rounded-xl bg-red-50 text-red-700 text-sm font-medium">
+                  ⚠️ {totalLate} action(s) en retard tous bénéficiaires confondus
+                </div>
+              )}
+              {upcomingRdv > 0 && (
+                <div className="px-4 py-2 rounded-xl bg-[#FBF3E4] text-gold-deep text-sm font-medium">
+                  📅 {upcomingRdv} rendez-vous dans les 3 prochains jours
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {list.length === 0 ? (
           <div className="bg-white rounded-xl2 border border-line p-6 text-sm text-[#8A8577]">
