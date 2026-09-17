@@ -10,15 +10,41 @@ export default async function RessourcesPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: resources } = await supabase
+  const { data: beneficiary } = await supabase
+    .from("beneficiaries")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+
+  const { data: publicResources } = await supabase
     .from("resources")
     .select("id, title, category, type, url")
-    .eq("visible", true)
-    .order("category", { ascending: true });
+    .eq("visible", true);
 
-  const list = resources ?? [];
-  const grouped: Record<string, typeof list> = {};
-  for (const r of list) {
+  let targetedResources: typeof publicResources = [];
+  if (beneficiary) {
+    const { data: assignedIds } = await supabase
+      .from("beneficiary_resources")
+      .select("resource_id")
+      .eq("beneficiary_id", beneficiary.id);
+
+    const ids = (assignedIds ?? []).map((a) => a.resource_id);
+    if (ids.length > 0) {
+      const { data } = await supabase
+        .from("resources")
+        .select("id, title, category, type, url")
+        .in("id", ids);
+      targetedResources = data ?? [];
+    }
+  }
+
+  const merged = [...(publicResources ?? [])];
+  for (const r of targetedResources ?? []) {
+    if (!merged.find((m) => m.id === r.id)) merged.push(r);
+  }
+
+  const grouped: Record<string, typeof merged> = {};
+  for (const r of merged) {
     const key = r.category || "Autres";
     grouped[key] = grouped[key] || [];
     grouped[key].push(r);
@@ -32,7 +58,7 @@ export default async function RessourcesPage() {
         </Link>
         <h1 className="text-lg font-bold text-navy mt-3 mb-5">Mes ressources</h1>
 
-        {list.length === 0 ? (
+        {merged.length === 0 ? (
           <div className="bg-white rounded-xl2 border border-line p-4 text-xs text-[#8A8577]">
             Aucune ressource disponible pour le moment.
           </div>
