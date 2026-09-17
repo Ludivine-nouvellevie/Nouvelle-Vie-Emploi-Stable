@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { addMindsetEntry } from "./actions";
 import MoodPicker from "./MoodPicker";
+import ZenBanner from "./ZenBanner";
 
 const BOOSTS = [
   "Je me donne les moyens de réussir.",
@@ -62,7 +63,30 @@ export default async function MentalPage() {
         <Link href="/dashboard" className="text-xs text-navy underline">
           ← Tableau de bord
         </Link>
-        <h1 className="text-lg font-bold text-navy mt-3 mb-5">Mon mental</h1>
+        <h1 className="text-lg font-bold text-navy mt-3 mb-4">Mon mental</h1>
+
+        <ZenBanner />
+
+        <div className="grid grid-cols-3 gap-2 my-4">
+          <Link
+            href="/mental/exercices"
+            className="text-center py-2.5 rounded-xl border-2 border-navy text-navy text-xs font-semibold"
+          >
+            Exercices
+          </Link>
+          <Link
+            href="/mental/meditations"
+            className="text-center py-2.5 rounded-xl border-2 border-navy text-navy text-xs font-semibold"
+          >
+            Méditations
+          </Link>
+          <Link
+            href="/mental/progres"
+            className="text-center py-2.5 rounded-xl border-2 border-navy text-navy text-xs font-semibold"
+          >
+            Mes progrès
+          </Link>
+        </div>
 
         <div className="bg-[#FBF3E4] rounded-xl2 p-4 mb-4">
           <p className="text-[11px] font-semibold text-gold-deep uppercase mb-1">Mon boost du jour</p>
