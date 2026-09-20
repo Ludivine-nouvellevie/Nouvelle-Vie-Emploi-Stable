@@ -213,6 +213,14 @@ export default async function DashboardPage() {
             Offres d'emploi
           </Link>
         </div>
+        <div className="mx-5 mb-2">
+          <Link
+            href="/documents"
+            className="block text-center w-full py-3 rounded-full border-2 border-navy text-navy text-sm font-semibold"
+          >
+            Mes documents
+          </Link>
+        </div>
 
         <div className="h-4" />
       </div>
