@@ -65,6 +65,21 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
     .order("due_date", { ascending: false, nullsFirst: false });
 
   const STATUS_LABELS: Record<string, string> = { a_faire: "À faire", en_cours: "En cours", fait: "Fait" };
+  const TYPE_LABELS: Record<string, string> = { cv: "CV", lettre: "Lettre de motivation", contrat: "Contrat de travail", autre: "Autre" };
+
+  const { data: files } = await supabase.storage.from("documents").list(beneficiary.user_id, {
+    limit: 100,
+    sortBy: { column: "created_at", order: "desc" },
+  });
+  const docList = files ?? [];
+  const docsWithUrls = await Promise.all(
+    docList.map(async (f) => {
+      const path = `${beneficiary.user_id}/${f.name}`;
+      const { data: signed } = await supabase.storage.from("documents").createSignedUrl(path, 60 * 60);
+      const [typePrefix] = f.name.split("__");
+      return { name: f.name, url: signed?.signedUrl, type: TYPE_LABELS[typePrefix] || "Autre" };
+    })
+  );
 
   return (
     <div className="min-h-screen bg-[#F4F0E6] p-6">
@@ -175,6 +190,30 @@ export default async function BeneficiaryDetailPage({ params }: { params: { id: 
                 <span className="text-[11px] font-medium px-2 py-1 rounded-full bg-[#F1EFE8] text-navy whitespace-nowrap">
                   {STATUS_LABELS[a.status] || a.status}
                 </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <h2 className="text-sm font-semibold text-navy mt-8 mb-3">Documents déposés</h2>
+        {docsWithUrls.length === 0 ? (
+          <div className="bg-white rounded-xl2 border border-line p-4 text-xs text-[#8A8577]">
+            Aucun document déposé pour le moment.
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {docsWithUrls.map((f) => (
+              <div key={f.name} className="bg-white rounded-xl border border-line p-3 flex items-center gap-2">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#F1EFE8] text-[#8A8577]">
+                  {f.type}
+                </span>
+                {f.url ? (
+                  <a href={f.url} target="_blank" rel="noreferrer" className="text-sm text-navy underline truncate">
+                    {f.name.split("-").slice(1).join("-") || f.name}
+                  </a>
+                ) : (
+                  <span className="text-sm text-navy truncate">{f.name}</span>
+                )}
               </div>
             ))}
           </div>
